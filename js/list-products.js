@@ -1,10 +1,32 @@
 import {ProductApi} from "./api/product.api.js";
 
-const productApi = new ProductApi();
-productApi.getAll().then();
+
+
+function fetchProducts(){
+  ProductApi.getAll().then(
+    products => {
+      const hotProducts = document.getElementById("hot-products");
+      products.forEach(product => {
+        hotProducts.innerHTML += `
+            <div class="product">
+                <img src="${product.imageUrl}" alt="" />
+                <span>${product.name}</span>
+                <div class="quantity-container">
+                    <button class="quantity-button decrease">-</button>
+                    <input type="text" class="quantity-input" value="1">
+                    <button class="quantity-button increase">+</button>
+                </div>
+                <button class="add-to-cart-button" data-product-name="Áo Thun A">Thêm vào giỏ hàng</button>
+            </div>
+            `;
+      });
+    }
+  );
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   let cart = [];
+  fetchProducts();
 
   function updateCartCount() {
     const cartCountElement = document.getElementById('cart-count');
