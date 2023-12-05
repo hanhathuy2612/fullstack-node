@@ -13,7 +13,7 @@ exports.ProductController = {
           id: insertId
         });
       }
-    });
+    })
   },
   list: (req, res) => {
     const query = "select * from products limit 10";

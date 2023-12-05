@@ -4,61 +4,42 @@ import {fileURLToPath} from 'url';
 import * as Mysql from "./mysql-connection.cjs";
 import {ProductController} from "./controllers/product.controller.cjs";
 import bodyParser from "body-parser";
-// import cors from "cors";
+import cors from "cors";
+import mainRoutes from "./router/main.router.cjs";
 
 const app = express()
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const corsOptions = {
+  origin: "http://locahost:3001",
+  methods: "*",
+  allowedHeaders: "*",
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
+
 app.use(urlencoded({extended: true}));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(express.json())
+
 app.use('/js', staticLib(join(__dirname, 'js')));
 app.use('/css', staticLib(join(__dirname, 'css')));
 
-// const corsOptions = {
-//   origin: "*",
-//   methods: "*",
-//   allowedHeaders: "*",
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
+app.set('view engine', 'ejs');
+
+app.use(mainRoutes);
 
 
-const people = [
-  {
-    name: "Hannah Rickard",
-    number: "06-51-99-56-83",
-    id: 1
-  },
-  {
-    name: "Hyun Namkoong",
-    number: "10987654",
-    id: 2
-  },
-  {
-    name: "Courtney Martinez",
-    number: "3691215",
-    id: 3
-  }
-]
 
-
-app.get('/', (request, response) => {
-  response.sendFile('views/index.html', {root: __dirname});
+app.use((req, res) => {
+  res.status(404).send("<h1>Page Not Found</h1>");
+  res.status(403).send("<h1>Page Not Found</h1>");
+  res.status(500).send("<h1>Server has error</h1>");
 })
 
-app.get("/api/products", [
-  ProductController.list
-]);
-
-app.post("/api/products",  [ProductController.create])
-
-const PORT = 3001
-
-
-// app.use(cors(corsOptions));
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(3001, () => {
+  console.log(`Server running on port ${3001}`)
 })
 
 Mysql.mysqlConnection();
